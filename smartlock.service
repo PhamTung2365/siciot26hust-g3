@@ -1,0 +1,20 @@
+[Unit]
+Description=Smart Lock - Face Recognition Server
+After=network.target
+
+[Service]
+Type=simple
+User=v005128
+WorkingDirectory=/home/v005128/Vision_DL/CCD
+Environment="PATH=/home/v005128/Vision_DL/CCD/venv/bin"
+ExecStart=/home/v005128/Vision_DL/CCD/venv/bin/python3 /home/v005128/Vision_DL/CCD/web_stream_face.py
+Restart=always
+RestartSec=10
+
+# Log to systemd journal
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=smartlock
+
+[Install]
+WantedBy=multi-user.target

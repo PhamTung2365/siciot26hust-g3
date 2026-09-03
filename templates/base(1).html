@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SECURESCAN AI{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..700,0..1,0" rel="stylesheet">
+  <style>
+    :root { --blue:#2563eb; --navy:#0f172a; --slate:#64748b; --line:#dbe4f0; --page:#f5f8fc; --card:#fff; --green:#10b981; --red:#dc2626; }
+    * { box-sizing:border-box; } body { margin:0; min-height:100vh; background:var(--page); color:var(--navy); font-family:Inter,system-ui,sans-serif; }
+    a { color:var(--blue); text-decoration:none; } button,input { font:inherit; } button { cursor:pointer; }
+    .icon { font-family:'Material Symbols Outlined'; vertical-align:middle; font-size:21px; }
+    .topbar { position:sticky; top:0; z-index:10; height:64px; background:rgba(248,250,252,.92); backdrop-filter:blur(16px); border-bottom:1px solid var(--line); }
+    .topbar-inner { max-width:1180px; height:100%; margin:auto; padding:0 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .brand { display:flex; align-items:center; gap:10px; color:var(--blue); font-size:20px; font-weight:700; letter-spacing:-.6px; } .brand .icon { font-size:25px; }
+    .nav { display:flex; align-items:center; gap:14px; color:#475569; font-size:14px; } .nav form { margin:0; } .link-button { color:#475569; background:none; border:0; padding:0; }
+    .page { width:min(100% - 32px, 1180px); margin:32px auto 64px; } .card { background:var(--card); border:1px solid #e5eaf2; border-radius:16px; box-shadow:0 6px 20px rgba(15,23,42,.05); }
+    .button { min-height:44px; border:0; border-radius:8px; padding:0 16px; background:var(--blue); color:#fff; font-weight:600; display:inline-flex; align-items:center; justify-content:center; gap:8px; } .button:hover { background:#1d4ed8; }
+    .button.secondary { color:var(--blue); background:#e7f0ff; border:1px solid #bfd5ff; } .button.danger { background:#fff1f2; color:var(--red); border:1px solid #fecdd3; }
+    .field { display:grid; gap:7px; color:#334155; font-size:14px; font-weight:500; } .field input { height:46px; border:1px solid #cbd5e1; border-radius:8px; padding:0 13px; color:var(--navy); background:#fff; } .field input:focus { outline:2px solid #bfdbfe; border-color:var(--blue); }
+    .notice { border-radius:10px; padding:12px 14px; background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; } .error { background:#fff1f2; color:#be123c; border-color:#fecdd3; }
+    .eyebrow { color:#64748b; font-size:13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; }
+    @media (max-width:680px) { .topbar-inner { padding:0 16px; } .nav .optional { display:none; } .page { width:min(100% - 24px,1180px); margin-top:20px; } }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+{% if user %}
+<header class="topbar"><div class="topbar-inner">
+  <a class="brand" href="/"><span class="icon">shield</span>SECURESCAN AI</a>
+  <nav class="nav"><span class="optional">{{ user.username }}</span><a href="{{ url_for('change_password_page') }}">Đổi mật khẩu</a>{% if user.role == 'admin' %}<a href="{{ url_for('admin_users_page') }}">Quản lý user</a>{% endif %}<form action="{{ url_for('logout') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="link-button" type="submit">Đăng xuất</button></form></nav>
+</div></header>
+{% endif %}
+{% block body %}{% endblock %}
+</body>
+</html>
