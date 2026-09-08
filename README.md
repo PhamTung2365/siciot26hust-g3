@@ -37,10 +37,13 @@ Dựa trên sự phân tích giữa bài toán thực tế và nhu cầu sử d�
 
  • Yêu cầu 1 (Khắc phục trở ngại vật lý): Người dùng cần ra vào không gian làm việc liên tục nhưng không rảnh tay để tìm và sử dụng chìa khóa/thẻ từ (Problem) trong lúc đang phải bưng bê thiết bị nặng (Context), dẫn đến nguy cơ rơi vỡ đồ đạc hoặc mất thời gian thao tác (Consequence).
  → Hệ thống cần có khả năng tự động nhận diện khuôn mặt và điều khiển cơ cấu cơ học để tự động mở khóa, giúp giải phóng hoàn toàn đôi tay của người dùng.
+
  • Yêu cầu 2 (Cải thiện giao tiếp người - máy): Người dùng không biết thiết bị có đang hoạt động hay đã nhận ra mình hay chưa (Problem) khi đứng chờ trước cửa phòng (Context), dẫn đến tâm lý bối rối hoặc rủi ro cố sức đẩy cửa làm hỏng khóa khi chốt chưa kịp mở (Consequence).
  → Hệ thống cần được trang bị màn hình hiển thị trực tiếp (LCD) để phản hồi trạng thái theo thời gian thực (ví dụ: chào tên người dùng, thông báo từ chối, hoặc báo cửa đang mở).
+
  • Yêu cầu 3 (Đảm bảo tính sẵn sàng & Xử lý sự cố): Người dùng cần vào phòng gấp nhưng hệ thống AI mất mạng internet hoặc gặp lỗi phần mềm (Problem) trong các tình huống khẩn cấp (Context), gây ra việc bị nhốt bên ngoài, làm đình trệ công việc và gây nguy hiểm (Consequence).
  → Hệ thống bắt buộc phải có khả năng xử lý nhận diện hoàn toàn cục bộ (offline) và phải tích hợp một nút bấm vật lý (override) để mở khóa khẩn cấp bỏ qua quá trình nhận diện.
+ 
  • Yêu cầu 4 (Kiểm soát an ninh cá nhân hóa): Người quản lý không thể kiểm soát được ai là người thực sự đã mở cửa phòng (Problem) khi nhân viên sử dụng thẻ từ dùng chung hoặc cho nhau mượn thẻ (Context), dẫn đến không thể truy cứu trách nhiệm nếu xảy ra mất mát tài sản (Consequence).
  → Do đó, hệ thống cần hỗ trợ tính năng đăng ký khuôn mặt cá nhân hóa (enroll) để liên kết chính xác sinh trắc học với định danh từng người, đồng thời lưu lại lịch sử truy cập cơ bản (log).
 
