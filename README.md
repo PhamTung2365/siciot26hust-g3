@@ -43,11 +43,11 @@ Dựa trên sự phân tích giữa bài toán thực tế và nhu cầu sử d�
 
  • Yêu cầu 3 (Đảm bảo tính sẵn sàng & Xử lý sự cố): Người dùng cần vào phòng gấp nhưng hệ thống AI mất mạng internet hoặc gặp lỗi phần mềm (Problem) trong các tình huống khẩn cấp (Context), gây ra việc bị nhốt bên ngoài, làm đình trệ công việc và gây nguy hiểm (Consequence).
  → Hệ thống bắt buộc phải có khả năng xử lý nhận diện hoàn toàn cục bộ (offline) và phải tích hợp một nút bấm vật lý (override) để mở khóa khẩn cấp bỏ qua quá trình nhận diện.
- 
+
  • Yêu cầu 4 (Kiểm soát an ninh cá nhân hóa): Người quản lý không thể kiểm soát được ai là người thực sự đã mở cửa phòng (Problem) khi nhân viên sử dụng thẻ từ dùng chung hoặc cho nhau mượn thẻ (Context), dẫn đến không thể truy cứu trách nhiệm nếu xảy ra mất mát tài sản (Consequence).
  → Do đó, hệ thống cần hỗ trợ tính năng đăng ký khuôn mặt cá nhân hóa (enroll) để liên kết chính xác sinh trắc học với định danh từng người, đồng thời lưu lại lịch sử truy cập cơ bản (log).
 
-## Cài đặt và chạy
+## 4. Cài đặt và chạy
 
 Tạo cấu hình admin trước lần chạy đầu:
 
@@ -71,7 +71,7 @@ và chụp ảnh sẽ báo lỗi. Đổi camera và các thiết lập khác tro
 Tài khoản admin trong `.env` chỉ được tạo khi database còn trống. Admin tạo tài
 khoản `user`; user chỉ xem dashboard cơ bản và tự đổi mật khẩu.
 
-## Tài khoản và quyền
+## 5. Tài khoản và quyền
 
 - `admin`: quản lý khuôn mặt, chụp ảnh, tạo/list tài khoản user và đổi mật khẩu.
 - `user`: xem video/trạng thái cơ bản và đổi mật khẩu của chính mình.
@@ -80,7 +80,7 @@ khoản `user`; user chỉ xem dashboard cơ bản và tự đổi mật khẩu.
 Toàn bộ route cần đăng nhập; thao tác thay đổi dữ liệu yêu cầu CSRF token. Không
 đặt `.env` hoặc `data/users.db` vào Git hay Docker image.
 
-## Cấu hình
+## 6. Cấu hình
 
 Các giá trị được dùng trực tiếp từ `config.py`:
 
@@ -93,7 +93,7 @@ Các giá trị được dùng trực tiếp từ `config.py`:
 `MODEL_CONTEXT=-1` dùng CPU; giá trị từ `0` trở lên yêu cầu
 `CUDAExecutionProvider` tương ứng.
 
-## Sử dụng
+## 7. Sử dụng
 
 Web UI hỗ trợ:
 
@@ -112,7 +112,7 @@ source venv/bin/activate
 python3 test_face_recognition.py
 ```
 
-## API
+## 9. API
 
 | Method | Endpoint | Chức năng |
 |---|---|---|
@@ -130,7 +130,7 @@ Route xác thực: `/login`, `/logout`, `/change-password`; route quản trị u
 
 Các API thay đổi dữ liệu yêu cầu đăng nhập admin và CSRF token.
 
-## Kiểm tra
+## 10. Kiểm tra
 
 ```bash
 source venv/bin/activate
@@ -146,7 +146,7 @@ curl http://localhost:5000/info
 curl http://localhost:5000/status
 ```
 
-## Dữ liệu
+## 11. Dữ liệu
 
 Mỗi người có một file pickle trong `faces_db/`. Pickle chỉ nên được đọc từ
 nguồn tin cậy. Ảnh chụp và ảnh debug nằm trong `captures/`; embeddings không
