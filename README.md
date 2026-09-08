@@ -31,7 +31,7 @@ Thể hiện một trong việc chuyển đổi số không gian làm việc, m�
 
 ### 3.3. Yêu cầu cần đạt
 
-* **Yêu cầu 1 (Tối ưu hóa luồng công tác & Xác thực không chạm):**
+**Yêu cầu 1 (Tối ưu hóa luồng công tác & Xác thực không chạm):**
 
 - **User:** Nhân sự kỹ thuật, chuyên viên vận hành.
 
@@ -41,10 +41,10 @@ Thể hiện một trong việc chuyển đổi số không gian làm việc, m�
 
 - **Consequence:** Làm giảm hiệu suất làm việc, gây mệt mỏi và tiềm ẩn rủi ro rơi vỡ thiết bị trong quá trình xoay sở mở cửa.
 
-*Giải pháp đề xuất:* Khai thác sức mạnh của công nghệ InsightFace, hệ thống tự động nhận diện khuôn mặt người dùng ngay khi họ tiến lại gần. Thuật toán nhanh chóng xác thực và truyền tín hiệu điều khiển servo quay 180° để mở khóa. Điều giúp người dùng chỉ việc đẩy nhẹ cửa bước vào mà không cần thay đổi tư thế tay.
+>*Giải pháp đề xuất:* Khai thác sức mạnh của công nghệ InsightFace, hệ thống tự động nhận diện khuôn mặt người dùng ngay khi họ tiến lại gần. Thuật toán nhanh chóng xác thực và truyền tín hiệu điều khiển servo quay 180° để mở khóa. Điều giúp người dùng chỉ việc đẩy nhẹ cửa bước vào mà không cần thay đổi tư thế tay.
 
 
-* Yêu cầu 2 (Kiểm soát an ninh tuyệt đối & Ngăn chặn lấy cắp):
+**Yêu cầu 2 (Kiểm soát an ninh tuyệt đối & Ngăn chặn lấy cắp):**
 
 - **User:** Nhà quản lý an ninh, ban giám đốc.
 
@@ -54,11 +54,11 @@ Thể hiện một trong việc chuyển đổi số không gian làm việc, m�
 
 - **Consequence:** Rủi ro mất cắp tài sản hiện hữu mà không có cơ sở dữ liệu chính xác để truy cứu trách nhiệm.
 
-*Giải pháp đề xuất:* Ứng dụng mô hình ArcFace để trích xuất khuôn mặt thành vector 512 chiều độc bản. Mọi nỗ lực truy cập đều phải trải qua quá trình tính toán khoảng cách Cosine; nếu độ tin cậy không đạt ngưỡng yêu cầu (dưới 70%), hệ thống kiên quyết giữ nguyên trạng thái đóng và LCD hiển thị cảnh báo từ chối, tạo nên một lớp bảo vệ vững chắc cho tài sản nội bộ.
+>*Giải pháp đề xuất:* Ứng dụng mô hình ArcFace để trích xuất khuôn mặt thành vector 512 chiều độc bản. Mọi nỗ lực truy cập đều phải trải qua quá trình tính toán khoảng cách Cosine; nếu độ tin cậy không đạt ngưỡng yêu cầu (dưới 70%), hệ thống kiên quyết giữ nguyên trạng thái đóng và LCD hiển thị cảnh báo từ chối, tạo nên một lớp bảo vệ vững chắc cho tài sản nội bộ.
 
 
 
-* Yêu cầu 3 (Kiểm soát trạng thái cửa vật lý & Rủi ro mở hé):
+**Yêu cầu 3 (Kiểm soát trạng thái cửa vật lý & Rủi ro mở hé):**
 
 - **User:** Hệ thống quản trị vận hành.
 
@@ -68,11 +68,11 @@ Thể hiện một trong việc chuyển đổi số không gian làm việc, m�
 
 - **Consequence:** Chốt khóa đã kích hoạt nhưng cánh cửa chưa đóng kín, tạo ra khe hở vật lý để kẻ gian lợi dụng lẻn vào.
 
-*Giải pháp đề xuất:* Hệ thống được lập trình với một chu kỳ bảo vệ: sau 3 giây từ khi servo mở (180°), chốt khóa sẽ tự động quay về vị trí khóa (0°). Để giải quyết rủi ro cửa mở hé, hệ thống khóa tự động này cần được lắp đặt kết hợp cùng cơ cấu tay co thủy lực cơ học (tự động kéo khép cánh cửa vật lý) hoặc cảm biến từ, đảm bảo thao tác tự khóa của servo luôn đồng bộ với trạng thái đóng kín hoàn toàn của cánh cửa.
+>*Giải pháp đề xuất:* Hệ thống được lập trình với một chu kỳ bảo vệ: sau 3 giây từ khi servo mở (180°), chốt khóa sẽ tự động quay về vị trí khóa (0°). Để giải quyết rủi ro cửa mở hé, hệ thống khóa tự động này cần được lắp đặt kết hợp cùng cơ cấu tay co thủy lực cơ học (tự động kéo khép cánh cửa vật lý) hoặc cảm biến từ, đảm bảo thao tác tự khóa của servo luôn đồng bộ với trạng thái đóng kín hoàn toàn của cánh cửa.
 
 
 
-* **Yêu cầu 4 (Sự bền bỉ & Phương án dự phòng khẩn cấp):**
+**Yêu cầu 4 (Sự bền bỉ & Phương án dự phòng khẩn cấp):**
 
 - **User:** Toàn bộ nhân sự trong không gian làm việc.
 
@@ -82,7 +82,7 @@ Thể hiện một trong việc chuyển đổi số không gian làm việc, m�
 
 - **Consequence:** Gây cản trở công việc, tạo tâm lý hoang mang và mất an toàn cho nhân sự.
 
-*Giải pháp đề xuất:* Hệ thống duy trì năng lực nhận diện hoàn toàn cục bộ (offline) trên Raspberry Pi. Đặc biệt, trang bị nút bấm cơ học tại chân GPIO23 mở khóa lập tức (override) mà không cần thông qua AI, đảm bảo lối ra vào luôn thông suốt và an toàn trong mọi kịch bản.
+>*Giải pháp đề xuất:* Hệ thống duy trì năng lực nhận diện hoàn toàn cục bộ (offline) trên Raspberry Pi. Đặc biệt, trang bị nút bấm cơ học tại chân GPIO23 mở khóa lập tức (override) mà không cần thông qua AI, đảm bảo lối ra vào luôn thông suốt và an toàn trong mọi kịch bản.
 
 ## 4. Cài đặt và chạy
 
