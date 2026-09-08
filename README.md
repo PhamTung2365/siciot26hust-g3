@@ -34,16 +34,26 @@ Thể hiện một trong việc chuyển đổi số không gian làm việc, m�
 * Yêu cầu 1 (Tối ưu hóa luồng công tác & Xác thực không chạm):**
 
 ** User: ** Nhân sự kỹ thuật, chuyên viên vận hành.
+
 ** Problem: ** Phải ngắt quãng công việc, tìm kiếm thẻ từ và thao tác mở khóa thủ công.
+
 ** Context: ** Khi đang thực hiện các chuỗi tác vụ chuyên môn đòi hỏi sự tập trung cao độ hoặc đang dùng cả hai tay để bưng bê thiết bị, máy móc.
+
 ** Consequence: ** Làm giảm hiệu suất làm việc, gây mệt mỏi và tiềm ẩn rủi ro rơi vỡ thiết bị trong quá trình xoay sở mở cửa.
+
 *Giải pháp đề xuất:* Khai thác sức mạnh của công nghệ InsightFace, hệ thống tự động nhận diện khuôn mặt người dùng ngay khi họ tiến lại gần. Thuật toán nhanh chóng xác thực và truyền tín hiệu điều khiển servo quay 180° để mở khóa. Điều giúp người dùng chỉ việc đẩy nhẹ cửa bước vào mà không cần thay đổi tư thế tay.
+
+
 * Yêu cầu 2 (Kiểm soát an ninh tuyệt đối & Ngăn chặn lấy cắp):**
 
 **User:** Nhà quản lý an ninh, ban giám đốc.
+
 **Problem:** Không thể xác minh danh tính thực sự của người vừa mở cửa, dẫn đến lỗ hổng an ninh do mượn thẻ hoặc dùng thẻ giả mạo.
+
 **Context:** Môi trường lưu trữ thiết bị đắt tiền, dữ liệu bảo mật cần ngăn chặn tuyệt đối người lạ mặt hoặc nhân sự không có thẩm quyền.
+
 **Consequence:** Rủi ro mất cắp tài sản hiện hữu mà không có cơ sở dữ liệu chính xác để truy cứu trách nhiệm.
+
 *Giải pháp đề xuất:* Ứng dụng mô hình ArcFace để trích xuất khuôn mặt thành vector 512 chiều độc bản. Mọi nỗ lực truy cập đều phải trải qua quá trình tính toán khoảng cách Cosine; nếu độ tin cậy không đạt ngưỡng yêu cầu (dưới 70%), hệ thống kiên quyết giữ nguyên trạng thái đóng và LCD hiển thị cảnh báo từ chối, tạo nên một lớp bảo vệ vững chắc cho tài sản nội bộ.
 
 
@@ -51,9 +61,13 @@ Thể hiện một trong việc chuyển đổi số không gian làm việc, m�
 * Yêu cầu 3 (Kiểm soát trạng thái cửa vật lý & Rủi ro mở hé):**
 
 **User:** Hệ thống quản trị vận hành.
+
 **Problem:** Cơ cấu chốt khóa điện tử (servo) tự động khóa lại, nhưng cánh cửa thực tế có thể vô tình bị khép hờ hoặc người dùng đi ra mà không kéo sát cửa vào khung.
+
 **Context:** Trong những thời điểm giao ca, hoặc khi nhân sự di chuyển ra ngoài vội vã.
+
 **Consequence:** Chốt khóa đã kích hoạt nhưng cánh cửa chưa đóng kín, tạo ra khe hở vật lý để kẻ gian lợi dụng lẻn vào.
+
 *Giải pháp đề xuất:* Hệ thống được lập trình với một chu kỳ bảo vệ: sau 3 giây từ khi servo mở (180°), chốt khóa sẽ tự động quay về vị trí khóa (0°). Để giải quyết rủi ro cửa mở hé, hệ thống khóa tự động này cần được lắp đặt kết hợp cùng cơ cấu tay co thủy lực cơ học (tự động kéo khép cánh cửa vật lý) hoặc cảm biến từ, đảm bảo thao tác tự khóa của servo luôn đồng bộ với trạng thái đóng kín hoàn toàn của cánh cửa.
 
 
@@ -61,9 +75,13 @@ Thể hiện một trong việc chuyển đổi số không gian làm việc, m�
 * Yêu cầu 4 (Sự bền bỉ & Phương án dự phòng khẩn cấp):**
 
 **User:** Toàn bộ nhân sự trong không gian làm việc.
+
 **Problem:** Kẹt tại khu vực cửa do hệ thống mạng nội bộ gián đoạn hoặc phần mềm gặp sự cố đột xuất.
+
 **Context:** Trong các tình huống cần di chuyển khẩn cấp hoặc hệ thống WiFi tại cơ sở bị mất kết nối.
+
 **Consequence:** Gây cản trở công việc, tạo tâm lý hoang mang và mất an toàn cho nhân sự.
+
 *Giải pháp đề xuất:* Hệ thống duy trì năng lực nhận diện hoàn toàn cục bộ (offline) trên Raspberry Pi. Đặc biệt, trang bị nút bấm cơ học tại chân GPIO23 mở khóa lập tức (override) mà không cần thông qua AI, đảm bảo lối ra vào luôn thông suốt và an toàn trong mọi kịch bản.
 
 ## 4. Cài đặt và chạy
