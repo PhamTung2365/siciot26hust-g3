@@ -2,6 +2,7 @@
 
 ## 1. Thông tin nhóm
 Tên nhóm: Nhóm 3
+
 Thành viên:
 - Mạc Thanh Bình
 - Phạm Tiến Đạt
