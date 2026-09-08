@@ -1,11 +1,48 @@
 # Smart Lock Face Recognition
 
+## 1. Thông tin nhóm
+Tên nhóm: Nhóm 3
+Thành viên:
+- Mạc Thanh Bình
+- Phạm Tiến Đạt
+- Phạm Mạc Thanh Tùng
+- Lê Quang Hiếu
+
+## 2. Giới thiệu
+
 Ứng dụng thử nghiệm nhận diện khuôn mặt bằng InsightFace, OpenCV và Flask. Hệ
 thống stream camera qua MJPEG, đăng ký nhiều embedding cho mỗi người và lưu dữ
 liệu cục bộ trong `faces_db/`.
 
 > Đây là prototype, chưa phải khóa cửa production: chưa có HTTPS hay chống giả
 > mạo (liveness detection). Không mở trực tiếp ra Internet.
+
+## 3. Problem & Context
+### 3.1. Bối cảnh
+Tại các phòng làm việc chuyên trách (như phòng máy chủ, phòng thí nghiệm hoặc kho thiết bị), nhân viên kỹ thuật và người quản lý thường xuyên phải ra vào liên tục trong giờ làm việc. Hiện tại, quá trình kiểm soát cửa ra vào ở những khu vực trên chủ yếu vẫn dựa vào chìa khóa cơ truyền thống hoặc thẻ từ nhận diện.
+
+Việc duy trì phương pháp cũ này bộc lộ nhiều điểm bất tiện và rủi ro:
+
+ • Bất tiện trong việc vận hành: Nhân viên thường xuyên gặp khó khăn trong việc quẹt thẻ hoặc tra chìa khóa vào ổ khi hai tay đang phải bưng bê thiết bị, máy móc hoặc tài liệu nặng.
+
+ • Rủi ro gián đoạn công việc: Việc nhân viên để quên, làm rơi hoặc thất lạc thẻ/chìa khóa xảy ra thường xuyên, khiến họ không thể tiếp cận không gian làm việc ngay lập tức.
+
+ • Lỗ hổng an ninh: Chìa khóa cơ và thẻ từ có thể dễ dàng bị sao chép, đánh cắp hoặc cho mượn trái phép. Người quản lý không thể xác định chính xác danh tính thực sự của người vừa mở cửa nếu chỉ dựa vào dữ liệu quẹt thẻ.
+
+### 3.2. Mục tiêu ban đầu
+Tạo ra một hệ thống khóa cửa thông minh, hoàn toàn tự động nhận diện chính xác danh tính người dùng ngay tại chỗ để tự động đóng hoặc  mở cửa mà không cần bất kỳ thao tác chạm vật lý nào. Hệ thống phải mang lại trải nghiệm ra vào liền mạch, có màn hình phản hồi thông tin trực quan cho người dùng. Đồng thời, hệ thống cung cấp cho người quản trị khả năng chủ động cấp quyền truy cập cho nhân viên mới và đảm bảo luôn có phương án dự phòng mở cửa khẩn cấp một cách linh hoạt, an toàn.
+
+### 3.3. Yêu cầu cần đạt
+Dựa trên sự phân tích giữa bài toán thực tế và nhu cầu sử dụng, hệ thống cần đáp ứng các yêu cầu sau:
+
+  • Yêu cầu 1 (Khắc phục trở ngại vật lý): Người dùng cần ra vào không gian làm việc liên tục nhưng không rảnh tay để tìm và sử dụng chìa khóa/thẻ từ (Problem) trong lúc đang phải bưng bê thiết bị nặng (Context), dẫn đến nguy cơ rơi vỡ đồ đạc hoặc mất thời gian thao tác (Consequence).
+  → Hệ thống cần có khả năng tự động nhận diện khuôn mặt và điều khiển cơ cấu cơ học để tự động mở khóa, giúp giải phóng hoàn toàn đôi tay của người dùng.
+  • Yêu cầu 2 (Cải thiện giao tiếp người - máy): Người dùng không biết thiết bị có đang hoạt động hay đã nhận ra mình hay chưa (Problem) khi đứng chờ trước cửa phòng (Context), dẫn đến tâm lý bối rối hoặc rủi ro cố sức đẩy cửa làm hỏng khóa khi chốt chưa kịp mở (Consequence).
+  → Hệ thống cần được trang bị màn hình hiển thị trực tiếp (LCD) để phản hồi trạng thái theo thời gian thực (ví dụ: chào tên người dùng, thông báo từ chối, hoặc báo cửa đang mở).
+  • Yêu cầu 3 (Đảm bảo tính sẵn sàng & Xử lý sự cố): Người dùng cần vào phòng gấp nhưng hệ thống AI mất mạng internet hoặc gặp lỗi phần mềm (Problem) trong các tình huống khẩn cấp (Context), gây ra việc bị nhốt bên ngoài, làm đình trệ công việc và gây nguy hiểm (Consequence).
+  → Hệ thống bắt buộc phải có khả năng xử lý nhận diện hoàn toàn cục bộ (offline) và phải tích hợp một nút bấm vật lý (override) để mở khóa khẩn cấp bỏ qua quá trình nhận diện.
+  • Yêu cầu 4 (Kiểm soát an ninh cá nhân hóa): Người quản lý không thể kiểm soát được ai là người thực sự đã mở cửa phòng (Problem) khi nhân viên sử dụng thẻ từ dùng chung hoặc cho nhau mượn thẻ (Context), dẫn đến không thể truy cứu trách nhiệm nếu xảy ra mất mát tài sản (Consequence).
+  → Do đó, hệ thống cần hỗ trợ tính năng đăng ký khuôn mặt cá nhân hóa (enroll) để liên kết chính xác sinh trắc học với định danh từng người, đồng thời lưu lại lịch sử truy cập cơ bản (log).
 
 ## Cài đặt và chạy
 
