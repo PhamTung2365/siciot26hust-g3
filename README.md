@@ -17,36 +17,54 @@ liệu cục bộ trong `faces_db/`.
 
 > Đây là prototype, chưa phải khóa cửa production: chưa có HTTPS hay chống giả
 > mạo (liveness detection). Không mở trực tiếp ra Internet.
+## 3. PHẦN 1 — Problem & Context
 
-## 3. Problem & Context
 ### 3.1. Bối cảnh
-Tại các phòng làm việc chuyên trách (như phòng máy chủ, phòng thí nghiệm hoặc kho thiết bị), nhân viên kỹ thuật và người quản lý thường xuyên phải ra vào liên tục trong giờ làm việc. Hiện tại, quá trình kiểm soát cửa ra vào ở những khu vực trên chủ yếu vẫn dựa vào chìa khóa cơ truyền thống hoặc thẻ từ nhận diện.
 
-Việc duy trì phương pháp cũ này bộc lộ nhiều điểm bất tiện và rủi ro:
+Tại các không gian làm việc chuyên trách (như phòng máy chủ, phòng thí nghiệm, kho thiết bị giá trị cao), đội ngũ chuyên viên và nhà quản lý thường xuyên phải di chuyển ra vào để thực hiện các tác vụ công tác liên tục.
 
- • Bất tiện trong việc vận hành: Nhân viên thường xuyên gặp khó khăn trong việc quẹt thẻ hoặc tra chìa khóa vào ổ khi hai tay đang phải bưng bê thiết bị, máy móc hoặc tài liệu nặng.
-
- • Rủi ro gián đoạn công việc: Việc nhân viên để quên, làm rơi hoặc thất lạc thẻ/chìa khóa xảy ra thường xuyên, khiến họ không thể tiếp cận không gian làm việc ngay lập tức.
-
- • Lỗ hổng an ninh: Chìa khóa cơ và thẻ từ có thể dễ dàng bị sao chép, đánh cắp hoặc cho mượn trái phép. Người quản lý không thể xác định chính xác danh tính thực sự của người vừa mở cửa nếu chỉ dựa vào dữ liệu quẹt thẻ.
+Hiện tại, quá trình kiểm soát an ninh vẫn phụ thuộc vào phương thức vật lý như thẻ từ hoặc chìa khóa cơ. Điều này tạo ra một rào cản đáng kể: nhân sự luôn phải rảnh tay để quẹt thẻ hoặc vặn tay nắm cửa. Trong những tình huống đang mang vác máy móc nặng, thiết bị nhạy cảm hoặc xử lý sự cố khẩn cấp, phương thức cũ bộc lộ sự bất tiện lớn, làm gián đoạn luồng công việc. Hơn thế nữa, thẻ từ thiếu đi cơ chế trong việc định danh sinh trắc học độc bản; chúng dễ dàng bị sao chép hoặc mượn tạm, tạo ra nguy cơ người ngoài lọt vào đánh cắp tài sản mà hệ thống quản lý không thể truy vết chính xác danh tính thực sự.
 
 ### 3.2. Mục tiêu ban đầu
-Tạo ra một hệ thống khóa cửa thông minh, hoàn toàn tự động nhận diện chính xác danh tính người dùng ngay tại chỗ để tự động đóng hoặc  mở cửa mà không cần bất kỳ thao tác chạm vật lý nào. Hệ thống phải mang lại trải nghiệm ra vào liền mạch, có màn hình phản hồi thông tin trực quan cho người dùng. Đồng thời, hệ thống cung cấp cho người quản trị khả năng chủ động cấp quyền truy cập cho nhân viên mới và đảm bảo luôn có phương án dự phòng mở cửa khẩn cấp một cách linh hoạt, an toàn.
+
+Thể hiện một trong việc chuyển đổi số không gian làm việc, mục tiêu của dự án là xây dựng một hệ thống khóa cửa thông minh có khả năng chủ động nhận diện người dùng. Hệ thống hướng tới việc xóa bỏ hoàn toàn rào cản chạm vật lý trong khâu xác thực, mang lại trải nghiệm ra vào liền mạch để nhân sự tập trung tối đa vào chuyên môn. Đồng thời, giải pháp này phải thiết lập một phòng tuyến an ninh vững chắc, tự động hóa quá trình đóng/mở chốt khóa và ngăn chặn tuyệt đối mọi hành vi xâm nhập trái phép để bảo vệ tài sản.
 
 ### 3.3. Yêu cầu cần đạt
-Dựa trên sự phân tích giữa bài toán thực tế và nhu cầu sử dụng, hệ thống cần đáp ứng các yêu cầu sau:
 
- • Yêu cầu 1 (Khắc phục trở ngại vật lý): Người dùng cần ra vào không gian làm việc liên tục nhưng không rảnh tay để tìm và sử dụng chìa khóa/thẻ từ (Problem) trong lúc đang phải bưng bê thiết bị nặng (Context), dẫn đến nguy cơ rơi vỡ đồ đạc hoặc mất thời gian thao tác (Consequence).
- → Hệ thống cần có khả năng tự động nhận diện khuôn mặt và điều khiển cơ cấu cơ học để tự động mở khóa, giúp giải phóng hoàn toàn đôi tay của người dùng.
+* Yêu cầu 1 (Tối ưu hóa luồng công tác & Xác thực không chạm):**
 
- • Yêu cầu 2 (Cải thiện giao tiếp người - máy): Người dùng không biết thiết bị có đang hoạt động hay đã nhận ra mình hay chưa (Problem) khi đứng chờ trước cửa phòng (Context), dẫn đến tâm lý bối rối hoặc rủi ro cố sức đẩy cửa làm hỏng khóa khi chốt chưa kịp mở (Consequence).
- → Hệ thống cần được trang bị màn hình hiển thị trực tiếp (LCD) để phản hồi trạng thái theo thời gian thực (ví dụ: chào tên người dùng, thông báo từ chối, hoặc báo cửa đang mở).
+** User: ** Nhân sự kỹ thuật, chuyên viên vận hành.
+** Problem: ** Phải ngắt quãng công việc, tìm kiếm thẻ từ và thao tác mở khóa thủ công.
+** Context: ** Khi đang thực hiện các chuỗi tác vụ chuyên môn đòi hỏi sự tập trung cao độ hoặc đang dùng cả hai tay để bưng bê thiết bị, máy móc.
+** Consequence: ** Làm giảm hiệu suất làm việc, gây mệt mỏi và tiềm ẩn rủi ro rơi vỡ thiết bị trong quá trình xoay sở mở cửa.
+*Giải pháp đề xuất:* Khai thác sức mạnh của công nghệ InsightFace, hệ thống tự động nhận diện khuôn mặt người dùng ngay khi họ tiến lại gần. Thuật toán nhanh chóng xác thực và truyền tín hiệu điều khiển servo quay 180° để mở khóa. Điều giúp người dùng chỉ việc đẩy nhẹ cửa bước vào mà không cần thay đổi tư thế tay.
+* Yêu cầu 2 (Kiểm soát an ninh tuyệt đối & Ngăn chặn lấy cắp):**
 
- • Yêu cầu 3 (Đảm bảo tính sẵn sàng & Xử lý sự cố): Người dùng cần vào phòng gấp nhưng hệ thống AI mất mạng internet hoặc gặp lỗi phần mềm (Problem) trong các tình huống khẩn cấp (Context), gây ra việc bị nhốt bên ngoài, làm đình trệ công việc và gây nguy hiểm (Consequence).
- → Hệ thống bắt buộc phải có khả năng xử lý nhận diện hoàn toàn cục bộ (offline) và phải tích hợp một nút bấm vật lý (override) để mở khóa khẩn cấp bỏ qua quá trình nhận diện.
+**User:** Nhà quản lý an ninh, ban giám đốc.
+**Problem:** Không thể xác minh danh tính thực sự của người vừa mở cửa, dẫn đến lỗ hổng an ninh do mượn thẻ hoặc dùng thẻ giả mạo.
+**Context:** Môi trường lưu trữ thiết bị đắt tiền, dữ liệu bảo mật cần ngăn chặn tuyệt đối người lạ mặt hoặc nhân sự không có thẩm quyền.
+**Consequence:** Rủi ro mất cắp tài sản hiện hữu mà không có cơ sở dữ liệu chính xác để truy cứu trách nhiệm.
+*Giải pháp đề xuất:* Ứng dụng mô hình ArcFace để trích xuất khuôn mặt thành vector 512 chiều độc bản. Mọi nỗ lực truy cập đều phải trải qua quá trình tính toán khoảng cách Cosine; nếu độ tin cậy không đạt ngưỡng yêu cầu (dưới 70%), hệ thống kiên quyết giữ nguyên trạng thái đóng và LCD hiển thị cảnh báo từ chối, tạo nên một lớp bảo vệ vững chắc cho tài sản nội bộ.
 
- • Yêu cầu 4 (Kiểm soát an ninh cá nhân hóa): Người quản lý không thể kiểm soát được ai là người thực sự đã mở cửa phòng (Problem) khi nhân viên sử dụng thẻ từ dùng chung hoặc cho nhau mượn thẻ (Context), dẫn đến không thể truy cứu trách nhiệm nếu xảy ra mất mát tài sản (Consequence).
- → Do đó, hệ thống cần hỗ trợ tính năng đăng ký khuôn mặt cá nhân hóa (enroll) để liên kết chính xác sinh trắc học với định danh từng người, đồng thời lưu lại lịch sử truy cập cơ bản (log).
+
+
+* Yêu cầu 3 (Kiểm soát trạng thái cửa vật lý & Rủi ro mở hé):**
+
+**User:** Hệ thống quản trị vận hành.
+**Problem:** Cơ cấu chốt khóa điện tử (servo) tự động khóa lại, nhưng cánh cửa thực tế có thể vô tình bị khép hờ hoặc người dùng đi ra mà không kéo sát cửa vào khung.
+**Context:** Trong những thời điểm giao ca, hoặc khi nhân sự di chuyển ra ngoài vội vã.
+**Consequence:** Chốt khóa đã kích hoạt nhưng cánh cửa chưa đóng kín, tạo ra khe hở vật lý để kẻ gian lợi dụng lẻn vào.
+*Giải pháp đề xuất:* Hệ thống được lập trình với một chu kỳ bảo vệ: sau 3 giây từ khi servo mở (180°), chốt khóa sẽ tự động quay về vị trí khóa (0°). Để giải quyết rủi ro cửa mở hé, hệ thống khóa tự động này cần được lắp đặt kết hợp cùng cơ cấu tay co thủy lực cơ học (tự động kéo khép cánh cửa vật lý) hoặc cảm biến từ, đảm bảo thao tác tự khóa của servo luôn đồng bộ với trạng thái đóng kín hoàn toàn của cánh cửa.
+
+
+
+* Yêu cầu 4 (Sự bền bỉ & Phương án dự phòng khẩn cấp):**
+
+**User:** Toàn bộ nhân sự trong không gian làm việc.
+**Problem:** Kẹt tại khu vực cửa do hệ thống mạng nội bộ gián đoạn hoặc phần mềm gặp sự cố đột xuất.
+**Context:** Trong các tình huống cần di chuyển khẩn cấp hoặc hệ thống WiFi tại cơ sở bị mất kết nối.
+**Consequence:** Gây cản trở công việc, tạo tâm lý hoang mang và mất an toàn cho nhân sự.
+*Giải pháp đề xuất:* Hệ thống duy trì năng lực nhận diện hoàn toàn cục bộ (offline) trên Raspberry Pi. Đặc biệt, trang bị nút bấm cơ học tại chân GPIO23 mở khóa lập tức (override) mà không cần thông qua AI, đảm bảo lối ra vào luôn thông suốt và an toàn trong mọi kịch bản.
 
 ## 4. Cài đặt và chạy
 
