@@ -33,13 +33,13 @@ Thể hiện một trong việc chuyển đổi số không gian làm việc, m�
 
 * Yêu cầu 1 (Tối ưu hóa luồng công tác & Xác thực không chạm):**
 
-** User: ** Nhân sự kỹ thuật, chuyên viên vận hành.
+**User:** Nhân sự kỹ thuật, chuyên viên vận hành.
 
-** Problem: ** Phải ngắt quãng công việc, tìm kiếm thẻ từ và thao tác mở khóa thủ công.
+**Problem:** Phải ngắt quãng công việc, tìm kiếm thẻ từ và thao tác mở khóa thủ công.
 
-** Context: ** Khi đang thực hiện các chuỗi tác vụ chuyên môn đòi hỏi sự tập trung cao độ hoặc đang dùng cả hai tay để bưng bê thiết bị, máy móc.
+**Context:** Khi đang thực hiện các chuỗi tác vụ chuyên môn đòi hỏi sự tập trung cao độ hoặc đang dùng cả hai tay để bưng bê thiết bị, máy móc.
 
-** Consequence: ** Làm giảm hiệu suất làm việc, gây mệt mỏi và tiềm ẩn rủi ro rơi vỡ thiết bị trong quá trình xoay sở mở cửa.
+**Consequence:** Làm giảm hiệu suất làm việc, gây mệt mỏi và tiềm ẩn rủi ro rơi vỡ thiết bị trong quá trình xoay sở mở cửa.
 
 *Giải pháp đề xuất:* Khai thác sức mạnh của công nghệ InsightFace, hệ thống tự động nhận diện khuôn mặt người dùng ngay khi họ tiến lại gần. Thuật toán nhanh chóng xác thực và truyền tín hiệu điều khiển servo quay 180° để mở khóa. Điều giúp người dùng chỉ việc đẩy nhẹ cửa bước vào mà không cần thay đổi tư thế tay.
 
