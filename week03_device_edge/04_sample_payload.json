@@ -1,0 +1,9 @@
+{
+  "device_id": "device01",
+  "timestamp": "2026-09-10T10:00:00Z",
+  "type": "telemetry",
+  "measurements": {
+    "value_1": 0,
+    "value_2": 0
+  }
+}

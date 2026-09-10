@@ -1,0 +1,6 @@
+{
+  "name": "iot-capstone-backend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {"start": "node src/app.js"}
+}
