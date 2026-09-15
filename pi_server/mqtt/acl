@@ -1,0 +1,9 @@
+user webapp
+topic write smartlock/+/command
+topic read smartlock/+/state
+topic read smartlock/+/event
+
+user esp32
+topic read smartlock/+/command
+topic write smartlock/+/state
+topic write smartlock/+/event

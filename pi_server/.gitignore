@@ -1,0 +1,7 @@
+.env
+users.db
+data/*.db
+data/mqtt/
+*.py[cod]
+__pycache__/
+.pytest_cache/

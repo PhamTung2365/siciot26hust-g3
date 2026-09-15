@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Smart Lock{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  {% if user %}
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="{{ url_for('index') }}">
+          <span class="brand-mark"><span class="icon">lock</span></span>
+          SMART LOCK
+        </a>
+        <nav class="nav" aria-label="Tài khoản">
+          <span class="optional">{{ user.username }}</span>
+          <a href="{{ url_for('change_password_page') }}">Đổi mật khẩu</a>
+          {% if user.role == 'admin' %}<a href="{{ url_for('admin_users_page') }}">Quản trị</a>{% endif %}
+          <form action="{{ url_for('logout') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button class="link-button" type="submit">Đăng xuất</button>
+          </form>
+        </nav>
+      </div>
+    </header>
+  {% endif %}
+  {% block body %}{% endblock %}
+</body>
+</html>

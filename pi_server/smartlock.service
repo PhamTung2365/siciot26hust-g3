@@ -1,0 +1,19 @@
+[Unit]
+Description=Smart Lock - Face Recognition Server
+After=network.target
+
+[Service]
+Type=simple
+User=v005128
+WorkingDirectory=/home/v005128/Vision_DL/CCD
+ExecStart=/bin/bash /home/v005128/Vision_DL/CCD/pi_server/smartlock.sh start
+Restart=always
+RestartSec=10
+
+# Log to systemd journal
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=smartlock
+
+[Install]
+WantedBy=multi-user.target
