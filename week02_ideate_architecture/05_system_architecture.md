@@ -1,60 +1,242 @@
 # 5. System Architecture
 
-## Kiến trúc end-to-end
+## 1. Kiến trúc tổng quan của hệ thống
+
+Hệ thống khóa thông minh trong dự án được triển khai theo mô hình edge-to-cloud/local IoT, với các thành phần chính sau:
+
 ```text
-Physical World
-      ↓
-USB/Webcam (input)
-      ↓
-Local processing: InsightFace + face_utils.py
-      ↓
-Recognition/cache: face_db.py
-      ↓
-Flask app: web_stream_face.py
-      ├── MJPEG video stream
-      ├── JSON status/info API
-      └── Authenticated admin/user routes
-      ↓
-HTTP on local network / localhost
-      ↓
-Browser dashboard + operator
+Người dùng / Admin / Browser
+          │
+          ▼
+   Flask Web App (Raspberry Pi)
+   - xác thực người dùng
+   - dashboard trạng thái
+   - truy vấn camera / nhận diện
+   - phát lệnh điều khiển cửa
+          │
+          │ HTTP / session / CSRF
+          ▼
+   Face Recognition Service
+   - camera stream
+   - InsightFace
+   - database khuôn mặt
+   - xác thực người / quyết định mở khóa
+          │
+          ▼
+   MQTT Gateway / Broker
+   - smartlock/{door_id}/command
+   - smartlock/{door_id}/state
+   - smartlock/{door_id}/event
+          │
+          ▼
+   ESP32 Device (door controller)
+   - nhận lệnh MQTT
+   - điều khiển SG90 servo
+   - hiển thị LCD 16x2
+   - publish trạng thái cửa
+          │
+          ▼
+   Physical Lock / Door Actuator
+   - cánh cửa vật lý
+   - chốt khóa cơ khí / servo
 ```
 
-### Phạm vi triển khai hiện tại
+Trong mô hình này:
 
-- Đây là kiến trúc prototype tập trung: camera, model nhận diện, database cục bộ và Flask backend có thể chạy trên cùng một máy.
-- `face_utils.get_face_embedding()` phát hiện khuôn mặt và tạo embedding; `face_db.recognize_face()` so khớp cosine với dữ liệu đã đăng ký.
-- `CameraState` giữ trạng thái tạm thời để dashboard đọc qua `/status`; video được phát qua MJPEG và thông tin hệ thống qua `/info`.
-- Không có MQTT/broker, cloud platform hoặc database từ xa trong repository hiện tại. HTTP chỉ là kênh truy cập web/API, không phải một luồng telemetry IoT đã hoàn thiện.
+- Raspberry Pi là trung tâm xử lý nhận diện và điều phối nghiệp vụ.
+- ESP32 là node thiết bị ở phía cánh cửa, trực tiếp thao tác với cơ cấu mở/khóa.
+- MQTT là kênh giao tiếp chuẩn giữa backend và thiết bị đầu cuối.
+- Web UI và dashboard cho phép người dùng theo dõi trạng thái, quản lý tài khoản và kiểm soát cửa từ xa.
 
-## Nếu có điều khiển
+---
+
+## 2. Thành phần thực tế của hệ thống trong repo
+
+### 2.1 Tầng cảm biến và nhận diện
+
+- Camera USB hoặc camera laptop được sử dụng như đầu vào hình ảnh cho nhận diện khuôn mặt.
+- Mô hình nhận dạng sử dụng InsightFace và các module như:
+  - `src/pi_server/face_utils.py`
+  - `src/pi_server/face_db.py`
+  - `src/pi_server/web_stream_face.py`
+- Các bước xử lý chính:
+  1. Chụp frame từ camera.
+  2. Phát hiện khuôn mặt.
+  3. Trích xuất embedding vector.
+  4. So sánh với dữ liệu đã lưu trong `faces_db/`.
+  5. Nếu có người phù hợp và đạt ngưỡng xác thực, backend quyết định phát lệnh mở cửa.
+
+### 2.2 Tầng backend và quản trị
+
+- Backend nằm trong [src/pi_server](src/pi_server) và là trung tâm điều phối hệ thống.
+- Nó chịu trách nhiệm:
+  - cung cấp web UI cho admin/user
+  - quản lý session và quyền truy cập
+  - lưu trữ tài khoản người dùng trong SQLite
+  - lưu trữ embedding khuôn mặt trong `faces_db/`
+  - giao tiếp với broker MQTT qua `mqtt_gateway.py`
+  - phát lệnh `open` hoặc `lock` tới thiết bị cửa
+
+Các file quan trọng:
+
+- [src/pi_server/web_stream_face.py](src/pi_server/web_stream_face.py)
+- [src/pi_server/auth.py](src/pi_server/auth.py)
+- [src/pi_server/mqtt_gateway.py](src/pi_server/mqtt_gateway.py)
+- [src/pi_server/config.py](src/pi_server/config.py)
+
+### 2.3 Tầng MQTT và điều khiển thiết bị
+
+- Broker Mosquitto được sử dụng như sàn trung gian giao tiếp.
+- Gateway thực hiện publish/subscribe với topic chuẩn:
+  - `smartlock/{door_id}/command`
+  - `smartlock/{door_id}/state`
+  - `smartlock/{door_id}/event`
+- Thiết bị ESP32 nhận lệnh, điều khiển servo SG90 để mở hay khóa cửa và gửi trạng thái lại cho backend.
+
+Đây là phần nối trực tiếp giữa phần mềm nhận diện và phần cứng cửa vật lý.
+
+### 2.4 Tầng thiết bị cổng cửa
+
+- Module nằm trong [src/ESP32_SG90andLCD_control](src/ESP32_SG90andLCD_control)
+- Thành phần cứng chính:
+  - ESP32
+  - Servo SG90
+  - Màn hình LCD I2C 16x2
+- Chức năng:
+  - kết nối Wi‑Fi
+  - kết nối MQTT
+  - nhận lệnh `open` / `lock`
+  - điều khiển servo ở góc 0° hoặc 180°
+  - hiển thị trạng thái cửa
+  - tự khóa sau thời gian quy định nếu cửa đang ở trạng thái mở
+
+File chính:
+
+- [src/ESP32_SG90andLCD_control/src/main.cpp](src/ESP32_SG90andLCD_control/src/main.cpp)
+- [src/ESP32_SG90andLCD_control/README.md](src/ESP32_SG90andLCD_control/README.md)
+
+---
+
+## 3. Luồng hoạt động chính của hệ thống
+
+### 3.1 Luồng nhận diện và mở cửa
+
 ```text
-Face match / access rule
-          ↓
-  [planned command boundary]
-          ↓
- Local GPIO or device controller
-          ↓
- Planned servo/lock actuator
-          ↓
- Physical door state
+Camera → Face detection → Feature embedding → Match against face_db
+                           │
+                           ▼
+                 Access decision (allowed/denied)
+                           │
+                           ▼
+                 Backend publishes MQTT command
+                           │
+                           ▼
+                 MQTT broker
+                           │
+                           ▼
+                 ESP32 receives command
+                           │
+                           ▼
+                 Servo rotates → door unlocks
+                           │
+                           ▼
+                 State published back to broker
+                           │
+                           ▼
+                 Dashboard updates status
 ```
 
-- Luồng điều khiển trên là kiến trúc mục tiêu, chưa phải implementation hiện tại. Code hiện chỉ cập nhật trạng thái nhận diện, chưa phát lệnh GPIO/servo và chưa có cảm biến xác nhận cửa đã đóng.
-- Khi triển khai phần này cần định nghĩa trạng thái an toàn, timeout, hành vi khi camera/model mất, cơ chế override và kiểm thử không làm người dùng bị mắc kẹt. Không nên cho phép một kết quả nhận diện đơn lẻ tự động mở khóa production khi chưa có các kiểm soát đó.
+### 3.2 Luồng người dùng từ web
 
-## Thành phần
-| Layer | Thành phần | Vai trò |
+```text
+Admin/User login → web UI → session validation
+                     │
+                     ▼
+           Request open or lock the door
+                     │
+                     ▼
+         Flask backend validates role + CSRF
+                     │
+                     ▼
+            MQTT gateway sends `command`
+                     │
+                     ▼
+                ESP32 executes physical action
+```
+
+### 3.3 Luồng trạng thái và phản hồi
+
+```text
+ESP32 → publish state JSON → broker → backend → dashboard
+```
+
+Các trạng thái cửa có thể bao gồm:
+
+- `unknown`
+- `closed`
+- `opening`
+- `open`
+- `closing`
+- `error`
+
+Theo thực tế hiện tại, trạng thái này được quản lý trên thiết bị và báo lên backend để hiển thị trên dashboard.
+
+---
+
+## 4. Mô hình module và phân trách nhiệm
+
+| Layer | Thành phần | Vai trò chính |
 |---|---|---|
-| Sensing | USB/webcam tương thích OpenCV | Cung cấp frame hình ảnh cho nhận diện; camera có thể không tồn tại, khi đó server vẫn khởi động nhưng video/enroll thất bại. |
-| Edge | `face_utils.py`, InsightFace `buffalo_l`, `face_db.py`, `CameraState` | Xử lý cục bộ, tạo embedding, so khớp theo threshold cấu hình và giữ trạng thái nhận diện; `camera_lock` tránh đọc camera đồng thời. |
-| Network | HTTP/Flask, MJPEG, JSON API trên host/port cấu hình | Truyền dashboard, video và trạng thái trong mạng cục bộ; không bắt buộc internet và hiện chưa có MQTT/broker. |
-| Backend | `web_stream_face.py` + `auth.py` | Cung cấp route, session, role `admin`/`user`, CSRF, enroll/delete/capture và các endpoint `/status`, `/info`, `/get_people`. |
-| Database | `faces_db/*.pkl` + SQLite `users.db` | Lưu embedding theo người và tài khoản/password hash; pickle là dữ liệu tin cậy cục bộ, không phải access log hoàn chỉnh. |
-| Application | Templates Flask, dashboard web, browser operator | Hiển thị video, match/confidence, thống kê, trạng thái camera/model và các chức năng theo role. |
+| Sensing | Camera, OpenCV, InsightFace | Thu thập và xử lý khung hình, trích xuất vector khuôn mặt |
+| Edge Intelligence | `face_utils.py`, `face_db.py`, `web_stream_face.py` | Nhận diện, đối chiếu embedding, quản lý camera state |
+| Auth & UI | `auth.py`, Flask templates, dashboard JS | Đăng nhập, phân quyền, hiển thị trạng thái hệ thống |
+| Control & Messaging | `mqtt_gateway.py`, Mosquitto broker | Gửi lệnh điều khiển, subscribe trạng thái, kết nối backend với thiết bị |
+| Device Layer | ESP32 + SG90 + LCD | Thực thi lệnh mở/khóa cửa, phản hồi trạng thái tới broker |
+| Storage | SQLite, `faces_db/`, `data/` | Lưu tài khoản, dữ liệu nhận dạng và các thông tin cấu hình |
+| Physical Layer | Cửa, chốt cơ, servo | Tác động trực tiếp lên hệ thống vật lý |
 
-## Ranh giới và phụ thuộc
+---
 
-- MVP hiện tại kiểm chứng nhận diện và quản trị dữ liệu; actuator servo, LCD, cảm biến cửa, nút override và access-event store vẫn là phần mở rộng trong scope, chưa có BOM/wiring/protocol tương ứng.
-- Embedding và ảnh capture/debug là dữ liệu nhạy cảm. Prototype chỉ nên chạy trong mạng tin cậy, không mở trực tiếp ra Internet; HTTPS, liveness detection và hardening production nằm ngoài kiến trúc hiện tại.
-- Nếu sau này tách edge khỏi backend, cần bổ sung giao thức xác thực, định dạng message, retry/offline queue, đồng bộ thời gian và quyền điều khiển trước khi dùng sơ đồ IoT phân tán.
+## 5. Ranh giới kiến trúc hiện tại
+
+### 5.1 Kiến trúc đã triển khai
+
+- Xác thực người dùng bằng web login
+- Giám sát camera và nhận diện khuôn mặt
+- Tạo/xóa dữ liệu khuôn mặt
+- Quản lý user/admin
+- MQTT gateway gửi lệnh cửa
+- ESP32 điều khiển servo và LCD
+- Dashboard hiển thị trạng thái cửa
+
+### 5.2 Vẫn là phần mở rộng hoặc cần bổ sung trong tương lai
+
+- Cảm biến cửa vật lý để xác nhận cánh cửa đã đóng thật sự
+- Liveness detection và chống giả mạo ảnh
+- Audit log, event log bền vững
+- MQTT TLS và bảo mật mạnh hơn
+- OTA firmware cho ESP32
+- Mạng nhiều cửa / nhiều site / cluster
+- Chế độ backup offline hoặc nguy cơ mất kết nối hệ thống
+
+---
+
+## 6. Yêu cầu an ninh và vận hành
+
+- Backend và gateway không được mở rộng trực tiếp trên Internet; nên chỉ sử dụng mạng LAN/VPN.
+- `faces_db/` và dữ liệu biometric cần bảo vệ cẩn thận.
+- Mỗi lệnh điều khiển nên có `request_id` để tránh xử lý trùng lặp.
+- Cần có cơ chế timeout và auto-lock để tránh cửa ở trạng thái mở quá lâu.
+- Quyền admin/user phải tách biệt rõ ràng theo vai trò.
+
+---
+
+## 7. Kết luận
+
+Kiến trúc của hệ thống smart lock trong repo là một hệ thống end-to-end có ba lớp chính:
+
+1. Layer nhận diện và điều phối nghiệp vụ trên Raspberry Pi
+2. Layer truyền thông bằng MQTT giữa backend và thiết bị
+3. Layer phần cứng cửa tại ESP32 với servo và màn hình LCD
+
+Như vậy, không phải chỉ là một ứng dụng web nhận diện khuôn mặt đơn lẻ, mà là một hệ thống khóa thông minh hoàn chỉnh, với các thành phần phần cứng, phần mềm, mạng nội bộ và cơ chế điều khiển vật lý đang được tích hợp theo đúng hướng từ mục tiêu ban đầu của dự án.
