@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Quản lý tài khoản · Smart Lock{% endblock %}
+{% block body %}
+<main class="page">
+  <header class="heading">
+    <p class="eyebrow">Phân quyền</p>
+    <h1>Quản lý tài khoản</h1>
+    <p class="muted">Admin quản lý danh tính; user chỉ giám sát và mở cửa.</p>
+  </header>
+  <section class="users-layout">
+    <article class="card enroll">
+      <h2>Thêm user vận hành</h2>
+      <p class="muted">Tài khoản mới không có quyền quản trị.</p>
+      <form id="new-user">
+        <label class="field">Username<input name="username" pattern="[A-Za-z0-9][A-Za-z0-9_.-]{2,31}" required></label>
+        <label class="field">Mật khẩu tạm thời<input name="password" type="password" minlength="8" required></label>
+        <button class="button" type="submit"><span class="icon">person_add</span>Tạo tài khoản</button>
+        <p id="message" aria-live="polite"></p>
+      </form>
+    </article>
+    <article class="card directory">
+      <div class="directory-head">
+        <h2>Danh sách tài khoản</h2>
+        <span class="door-pill" id="count">{{ users|length }} tài khoản</span>
+      </div>
+      <div class="user-list" id="users">
+        {% for user in users %}
+          <article class="user">
+            <span class="avatar icon">{{ 'admin_panel_settings' if user.role == 'admin' else 'person' }}</span>
+            <div>
+              <div class="user-name">{{ user.username }}</div>
+              <span class="role">{{ user.role }}</span>
+            </div>
+            <time class="created" datetime="{{ user.created_at }}">{{ user.created_at }}</time>
+          </article>
+        {% endfor %}
+      </div>
+    </article>
+  </section>
+</main>
+<script>window.adminUsersConfig = {{ {'csrfToken': csrf_token}|tojson }};</script>
+<script src="{{ url_for('static', filename='admin-users.js') }}" defer></script>
+{% endblock %}

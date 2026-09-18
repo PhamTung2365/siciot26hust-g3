@@ -1,0 +1,45 @@
+services:
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: smartlock-mqtt
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mqtt/acl:/mosquitto/config/acl:ro
+      - ./data/mqtt:/mosquitto/data
+    environment:
+      MQTT_WEB_PASSWORD: ${MQTT_WEB_PASSWORD}
+      MQTT_DEVICE_PASSWORD: ${MQTT_DEVICE_PASSWORD}
+    restart: always
+    networks:
+      - smartlock_net
+
+  smartlock:
+    build: .
+    container_name: smartlock
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    volumes:
+      - ./faces_db:/app/pi_server/faces_db
+      - ./captures:/app/pi_server/captures
+      - ./data:/app/pi_server/data
+      - ${HOME}/.insightface/models:/root/.insightface/models
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/host-ca-certificates.crt:ro
+    restart: always
+    env_file:
+      - .env
+    environment:
+      PYTHONUNBUFFERED: "1"
+      REQUESTS_CA_BUNDLE: /etc/ssl/certs/host-ca-certificates.crt
+      AUTH_DB_PATH: /app/pi_server/data/users.db
+      MQTT_HOST: mqtt
+    depends_on:
+      - mqtt
+    networks:
+      - smartlock_net
+
+networks:
+  smartlock_net:
+    driver: bridge

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Đăng nhập · Smart Lock{% endblock %}
+{% block body_class %}login-page{% endblock %}
+{% block body %}
+<main class="card login">
+  <header class="login-head">
+    <div class="brand-mark"><span class="icon">lock</span></div>
+    <h1>SMART LOCK</h1>
+    <p>Kiểm soát cửa bằng nhận diện khuôn mặt</p>
+  </header>
+  {% if error %}<p class="notice error">{{ error }}</p>{% endif %}
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label class="field">
+      Tên đăng nhập
+      <div class="input-icon">
+        <span class="icon">badge</span>
+        <input name="username" autocomplete="username" placeholder="Nhập tên đăng nhập" required autofocus>
+      </div>
+    </label>
+    <label class="field">
+      Mật khẩu
+      <div class="input-icon">
+        <span class="icon">lock</span>
+        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu" required>
+        <button class="password-toggle" type="button" aria-label="Hiện mật khẩu" onclick="password.type=password.type==='password'?'text':'password'">
+          <span class="icon">visibility</span>
+        </button>
+      </div>
+    </label>
+    <button class="button" type="submit"><span class="icon">login</span>Đăng nhập</button>
+  </form>
+  <div class="login-footer">KẾT NỐI BẢO MẬT · SMART LOCK</div>
+</main>
+{% endblock %}

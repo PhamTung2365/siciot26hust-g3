@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Điều khiển · Smart Lock{% endblock %}
+{% block body %}
+<main class="page dashboard">
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Trung tâm điều khiển</p>
+      <h1>Cửa chính</h1>
+    </div>
+    <span id="system-pill" class="system-pill"><span class="icon">sensors</span><span id="system-label">Đang khởi tạo</span></span>
+  </header>
+
+  <section class="monitor-grid">
+    <div class="card viewport">
+      <img src="{{ url_for('video_feed') }}" alt="Luồng camera tại cửa chính">
+      <span class="live">TRỰC TIẾP</span>
+      <span class="camera-label" id="camera-id">CAM —</span>
+    </div>
+    <aside class="card side-panel">
+      <h2>Trạng thái cửa</h2>
+      <div class="door-control">
+        <div class="door-row">
+          <span class="door-icon"><span class="icon" id="door-icon">door_front</span></span>
+          <span class="door-pill" id="door-state">Chưa kết nối</span>
+        </div>
+        <div class="door-actions">
+          <button class="button" data-door-action="open" type="button" disabled>
+            <span class="icon">lock_open</span>Mở khóa
+          </button>
+          <button class="button danger" data-door-action="lock" type="button" disabled>
+            <span class="icon">lock</span>Khóa cửa
+          </button>
+        </div>
+        <p class="event" id="door-message" aria-live="polite"></p>
+      </div>
+      <div class="metrics">
+        <div class="metric"><small>Khuôn mặt</small><strong id="face-count">0</strong></div>
+        <div class="metric"><small>FPS</small><strong id="fps">0</strong></div>
+        <div class="metric"><small>Nhận diện</small><strong id="match-name">Đang chờ</strong></div>
+        <div class="metric"><small>Tin cậy</small><strong id="confidence">—</strong></div>
+      </div>
+      <p class="event" id="system-message" aria-live="polite">Camera đang được kiểm tra.</p>
+    </aside>
+  </section>
+
+  {% if is_admin %}
+    <section class="admin-grid">
+      <article class="card manage">
+        <p class="eyebrow">Danh tính</p>
+        <h2>Đăng ký khuôn mặt</h2>
+        <form id="enroll-form">
+          <input class="soft-input" id="enroll-name" placeholder="Họ tên người đăng ký" minlength="2" required>
+          <button class="button" type="submit"><span class="icon">person_add</span>Đăng ký</button>
+        </form>
+        <p class="event" id="enroll-message" aria-live="polite"></p>
+      </article>
+      <article class="card manage">
+        <p class="eyebrow">Đã cấp quyền</p>
+        <h2>Người dùng khuôn mặt</h2>
+        <div class="people" id="people"><p class="event">Đang tải danh sách…</p></div>
+      </article>
+    </section>
+  {% else %}
+    <section class="card user-banner">
+      <span class="door-icon"><span class="icon">verified_user</span></span>
+      <div>
+        <h2>Quyền vận hành</h2>
+        <p>Bạn có thể xem trạng thái và mở cửa. Admin quản lý tài khoản và khuôn mặt.</p>
+      </div>
+    </section>
+  {% endif %}
+</main>
+<script>window.dashboardConfig = {{ {'csrfToken': csrf_token, 'isAdmin': is_admin}|tojson }};</script>
+<script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>
+{% endblock %}
