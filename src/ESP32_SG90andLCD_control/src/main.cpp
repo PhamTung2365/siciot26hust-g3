@@ -3,7 +3,7 @@
 #include <ESP32Servo.h>
 #include <ArduinoJson.h>
 #include <Wire.h>
-#include <LiquidCrystal_I2C.h> // Đảm bảo bạn đã cài LiquidCrystal I2C by Frank de Brabander
+#include <LiquidCrystal_I2C.h>
 
 const char* ssid = "Penrose";
 const char* wifi_password = "until2365";
