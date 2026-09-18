@@ -200,4 +200,7 @@
  C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-ledc.h \
  .pio/libdeps/esp32dev/ArduinoJson/src/ArduinoJson.h \
  .pio/libdeps/esp32dev/ArduinoJson/src/ArduinoJson.hpp \
- .pio/libdeps/esp32dev/ArduinoJson/src/ArduinoJson/Configuration.hpp
+ .pio/libdeps/esp32dev/ArduinoJson/src/ArduinoJson/Configuration.hpp \
+ C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
+ C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
+ .pio/libdeps/esp32dev/LiquidCrystal_I2C/LiquidCrystal_I2C.h

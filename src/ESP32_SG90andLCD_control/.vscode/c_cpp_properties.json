@@ -10,6 +10,8 @@
             "includePath": [
                 "D:/ESP32_project/sg90_control/include",
                 "D:/ESP32_project/sg90_control/src",
+                "D:/ESP32_project/sg90_control/.pio/libdeps/esp32dev/LiquidCrystal_I2C",
+                "C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 "C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                 "D:/ESP32_project/sg90_control/.pio/libdeps/esp32dev/ArduinoJson/src",
                 "D:/ESP32_project/sg90_control/.pio/libdeps/esp32dev/ESP32Servo/src",
@@ -241,7 +243,6 @@
                 "C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src",
                 "C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
                 "C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
-                "C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 ""
             ],
             "browse": {
@@ -249,6 +250,8 @@
                 "path": [
                     "D:/ESP32_project/sg90_control/include",
                     "D:/ESP32_project/sg90_control/src",
+                    "D:/ESP32_project/sg90_control/.pio/libdeps/esp32dev/LiquidCrystal_I2C",
+                    "C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     "C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                     "D:/ESP32_project/sg90_control/.pio/libdeps/esp32dev/ArduinoJson/src",
                     "D:/ESP32_project/sg90_control/.pio/libdeps/esp32dev/ESP32Servo/src",
@@ -480,7 +483,6 @@
                     "C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src",
                     "C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
                     "C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
-                    "C:/Users/Admin/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     ""
                 ]
             },
