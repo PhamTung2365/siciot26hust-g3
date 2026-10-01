@@ -5,7 +5,6 @@ Tên nhóm: Nhóm 3
 
 Thành viên:
 - Mạc Thanh Bình
-- Phạm Tiến Đạt
 - Phạm Mạc Thanh Tùng
 - Lê Quang Hiếu
 
