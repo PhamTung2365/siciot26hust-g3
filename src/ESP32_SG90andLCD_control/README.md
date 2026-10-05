@@ -25,8 +25,11 @@ Module này bao gồm các thành phần chính sau:
 Cấu hình chân phần cứng trong code:
 
 - Servo: GPIO 18
+- Nút nhấn mở cửa: GPIO 23 và GND
 - I2C LCD: SDA = GPIO 21, SCL = GPIO 22
 - Địa chỉ LCD: 0x27
+
+Nút nhấn sử dụng điện trở kéo lên nội bộ (`INPUT_PULLUP`), nên nối một chân nút vào GPIO 23 và chân còn lại vào GND. Nhấn nút sẽ mở cửa trong 5 giây rồi tự khóa; thao tác này hoạt động độc lập với MQTT.
 
 ---
 
@@ -113,8 +116,9 @@ Khi `setup()` được gọi:
 3. Khởi động LCD và hiển thị logo/chuỗi thông báo ban đầu.
 4. Cấu hình servo SG90 với tần số 50Hz.
 5. Gắn servo vào chân GPIO 18 và đặt servo ở vị trí khóa.
-6. Kết nối Wi‑Fi.
-7. Gắn callback MQTT và cấu hình broker.
+6. Cấu hình nút nhấn GPIO 23 với `INPUT_PULLUP`.
+7. Bắt đầu kết nối Wi‑Fi và MQTT theo kiểu không chặn để vòng lặp luôn xử lý nút nhấn và tự khóa cửa.
+8. Gắn callback MQTT và cấu hình broker.
 
 ### 4.2. Xử lý lệnh MQTT
 Trong `mqtt_callback()`, nếu topic bằng `smartlock/front-door/command`, code gọi `handle_command(payload, length)`. Hàm này:
@@ -136,8 +140,9 @@ Các góc servo:
 ### 4.4. Vòng lặp chính (`loop`)
 Trong `loop()`:
 
-- Nếu mất kết nối broker, gọi `reconnect_mqtt()` để khôi phục kết nối.
-- Gọi `mqtt_client.loop()` để duy trì giao tiếp MQTT.
+- Đọc GPIO 23 với chống dội 50 ms; khi phát hiện nhấn (mức LOW), mở cửa 5 giây mà không cần lệnh MQTT.
+- Thử kết nối lại Wi‑Fi và MQTT theo chu kỳ mà không chặn xử lý nút.
+- Gọi `mqtt_client.loop()` khi đã kết nối để duy trì giao tiếp MQTT.
 - Nếu `door_open == true` và thời gian `auto_lock_at` đã hết, servo quay về trạng thái khóa và publish `closed`.
 
 Đây là cơ chế điều khiển tự động, giúp cửa không bị mở quá lâu sau khi lệnh mở được gửi.
@@ -184,4 +189,3 @@ Trong file `main.cpp`, các tham số quan trọng cần điều chỉnh theo m�
 - `state_topic` và `command_topic` nếu muốn tùy biến theo từng cửa
 
 Đây là thông tin cần được cập nhật để module hoạt động đúng trên mạng triển khai của nhóm.
-
